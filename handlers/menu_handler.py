@@ -15,4 +15,5 @@ async def cmd_menu(call: types.CallbackQuery, state: FSMContext):
     user = await service.get_user(id=call.from_user.id)
     if (not user) or (not user.moderated):
         await context.answer("Ваша анкета еще не создана или на рассмотрении!")
-    await context.answer_photo(photo=user.photo, caption=str(user), reply_markup=get_menu_keyboard())
+    else:
+        await context.answer_photo(photo=user.photo, caption=str(user), reply_markup=get_menu_keyboard())

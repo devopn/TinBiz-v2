@@ -21,3 +21,14 @@ async def cmd_start(message: types.Message, state: FSMContext):
     else:
         await message.answer_photo(photo=user.photo, caption=str(user), reply_markup=get_menu_keyboard())
 
+@router.message(Command("help"))
+async def cmd_help(message: types.Message):
+    await message.answer('''<b>Чат бот поможет найти партнеров по бизнесу на основе выбранных вами фильтров (возраст, сфера бизнеса, тип сотрудничества).
+
+Доступные команды:</b>
+/start - Перезапуск бота
+/profile - Изменить информацию профиля
+/hide - Скрыть анкету
+/criteria - Изменить критерии поиска
+/start_search - Начать поиск собеседника
+/stop_search - Остановить поиск''', parse_mode="HTML")

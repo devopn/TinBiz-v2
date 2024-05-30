@@ -5,7 +5,7 @@ from db import service
 from states import RegistrationState
 from aiogram.fsm.context import FSMContext
 from aiogram.methods import SendPhoto
-
+from asyncio import sleep
 router = Router()
 
 from keyboards.fields_keyboard import get_fields_keyboard
@@ -65,10 +65,13 @@ async def reg_about(message: types.Message, state:FSMContext):
     if len(photos.photos) == 0:
         photo = await service.get_image(PhotoEnum.default_photo)
         if photo is None:
-            data = types.FSInputFile(f"img/{PhotoEnum.default_photo}")
-            photo = await message.answer_photo(data)
+            file = types.FSInputFile(f"img/{PhotoEnum.default_photo}")
+            photo = await message.answer_photo(file)
             await service.create_image(PhotoEnum.default_photo, photo.photo[0].file_id)
             photo = photo.photo[0].file_id
+            await message.answer("🔖<b>Регистрация</b>\n<i>В вашем профиле нету фотографии. Поменять фото профиля можно в настройках.</i>", parse_mode="HTML")
+        else:
+            photo = photo.id
     else:
         photo = photos.photos[0][0].file_id
     
@@ -85,7 +88,8 @@ async def reg_about(message: types.Message, state:FSMContext):
     await service.create_user(user)
     await state.clear()
     await message.answer("Анкету получили, спасибо! Её проверка займёт до двух рабочих дней, но мы постараемся быстрее. О результате напишем в этот бот.", parse_mode="HTML")
-
+    await sleep(24*3600)
+    await message.answer("Хотите получить совет от товых предпринимателей? Задавайте свой вопрос и смотрите ответ напрямую от акул бизнеса! Вступайте в канал @Tin_Biz и прокачайте свой business-mindset 💼")
 
 @router.callback_query(F.data == "cancel_moderate")
 async def cancel_moderate(call: types.CallbackQuery):

@@ -1,7 +1,7 @@
 import typer
 import asyncio
 from db.base import init_models
-from db.models import *
+from db.models import User, Search, Image, Admin
 # db resetting
 cli = typer.Typer()
 @cli.command()

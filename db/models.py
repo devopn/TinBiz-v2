@@ -4,8 +4,10 @@ from sqlalchemy import Integer
 from sqlalchemy import JSON
 from sqlalchemy import Boolean
 from sqlalchemy import BigInteger
+from sqlalchemy import DateTime
+import datetime
 from .base import Base
-
+from states import fields, ages
 
 class User(Base):
     __tablename__ = "users"
@@ -18,14 +20,17 @@ class User(Base):
     field = Column(String)
     about = Column(String)
     active = Column(Boolean, default=True)
-
+    # last_activity = Column(DateTime, default=datetime.datetime.now)
     photo = Column(String)
-    filters = Column(JSON, default={})
+    filters = Column(JSON, default={"age":{i:True for i in ages}, "field":{i:True for i in fields}})
 
     moderated = Column(Boolean, default=False)
 
     def __repr__(self) -> str:
         return f"{self.name}, {self.age}, {self.city}\n{self.field}\n{self.about}\n{'Анкета активна ✅' if self.active else 'Анкета неактивна ❌'}"
+    
+    def draw(self):
+        return f"{self.name}, {self.age}, {self.city}\n{self.field}\n{self.about}\n"
     
 
 class Search(Base):

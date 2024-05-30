@@ -12,9 +12,10 @@ router = Router()
 @router.message(Command("admin"))
 async def cmd_admin(message: types.Message):
     admins = await service.get_admins()
+    c = await service.get_unmoderate_count()
     if not message.from_user.id in admins:
         return
-    await message.answer("Админ панель", reply_markup=get_admin_main_keyboard())
+    await message.answer(f"Админ панель {c} на модерации", reply_markup=get_admin_main_keyboard())
 
 @router.callback_query(F.data.startswith("admin"))
 async def admin_callback(call: types.CallbackQuery, state: FSMContext):
@@ -59,6 +60,11 @@ async def moderate_callback(call: types.CallbackQuery, state: FSMContext):
             await call.message.answer("Админ панель", reply_markup=get_admin_main_keyboard())
             return
     candidate = await service.get_moderation_candidate()
+    if not candidate:
+        await call.message.answer("Анкеты закончились")
+        await state.clear()
+        await call.message.answer("Админ панель", reply_markup=get_admin_main_keyboard())
+        return
     await state.update_data(candidate_id=candidate.id)
     await call.message.answer_photo(photo=candidate.photo, caption=str(candidate), reply_markup=get_admin_moderation_keyboard())
 
